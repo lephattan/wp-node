@@ -1,0 +1,51 @@
+version: '3.2'
+
+services:
+        wordpress:
+                image: wordpress:5.7-fpm-alpine
+                user: "33"
+                restart: always
+                env_file:
+                        - ./wordpress/wordpress.env
+                volumes:
+                        - ./wordpress/html:/var/www/html:rw
+                container_name: wordpress
+                networks:
+                        - nginx-network
+        wp-cli:
+                image: wordpress:cli
+                user: "33"
+                volumes:
+                        - type: bind
+                          source: ./wordpress/html
+                          target: /var/www/html
+                container_name: wp-cli
+                env_file:
+                        - ./wordpress/wordpress.env
+                command: wp core install --path="/var/www/html" --admin_user=${WORDPRESS_USER} --url=beautitopia.test --title=Wordpress --admin_email="tanle2207@gmail.com" --admin_password=${WORDPRESS_PASS}
+                networks:
+                        - nginx-network
+                depends_on:
+                        - wordpress
+        nginx:
+                image: nginx:1.15.12-alpine
+                depends_on:
+                        - wordpress
+                container_name: nginx
+                restart: always
+                ports:
+                        - 80:80
+                volumes:
+                        - type: bind
+                          source: ./wordpress/html
+                          target: /var/www/html
+                        - type: bind
+                          source: .nginx/nginx-conf
+                          target: /etc/nginx/conf.d
+                networks:
+                        - nginx-network
+         
+networks:
+        nginx-network:
+                driver: bridge
+
