@@ -40,8 +40,12 @@ services:
                           source: ./wordpress/html
                           target: /var/www/html
                         - type: bind
-                          source: .nginx/nginx-conf
+                          source: ./nginx/nginx-conf
                           target: /etc/nginx/conf.d
+                        #- ./nginx/cache:/var/run/nginx-cache
+                        - type: bind
+                          source: ./nginx/cache
+                          target: /var/run/nginx-cache
                 networks:
                         - nginx-network
          
