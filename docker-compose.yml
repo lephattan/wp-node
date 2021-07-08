@@ -7,9 +7,12 @@ services:
     restart: always
     env_file:
       - ./wordpress/wordpress.env
+    #environment:
+      #WORDPRESS_CONFIG_EXTRA: |
+        #define('RT_WP_NGINX_HELPER_CACHE_PATH', '/var/www/nginx-cache/');
     volumes:
-      #- ./wordpress/html:/var/www/html:rw
       - wordpress_html:/var/www/html:rw
+      #- nginx_cache:/var/www/nginx-cache:rw
     container_name: wordpress
     networks:
       - nginx-network
@@ -19,14 +22,10 @@ services:
     user: "33"
     volumes:
       - wordpress_html:/var/www/html
-      - nginx_cache:/var/www/nginx-cache
-      #- type: bind
-        #source: ./wordpress/html
-        #target: /var/www/html
     container_name: wp-cli
     env_file:
       - ./wordpress/wordpress.env
-    command: wp core install --path="/var/www/html" --admin_user=${WORDPRESS_USER} --url=beautitopia.test --title=Wordpress --admin_email="tanle2207@gmail.com" --admin_password=${WORDPRESS_PASS}
+    command: wp core download --path="/var/www/html" --version=latest
     networks:
       - nginx-network
     depends_on:
