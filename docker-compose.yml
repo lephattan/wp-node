@@ -61,6 +61,8 @@ networks:
 volumes:
   wordpress_html:
     name: wordpress_html
+    external: true
   nginx_cache:
     name: nginx_cache
+    external: true
 
